@@ -47,7 +47,6 @@ public class GlobalExceptionHandler {
 
     private ErrorDto createErrorResponse(WebRequest req, String message) {
         HttpServletRequest httpServletRequest = (HttpServletRequest) req.resolveReference("request");
-        assert httpServletRequest != null;
         return new ErrorDto(new Date(), httpServletRequest.getRequestURI(), message);
     }
 }

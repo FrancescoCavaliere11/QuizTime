@@ -37,7 +37,7 @@ public class JwtHandler {
         Instant issuedAt = Instant.now().truncatedTo(ChronoUnit.SECONDS);
 
         JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
-                .subject(user.getPhoneNumber())
+                .subject(user.getEmail())
                 .issueTime(Date.from(issuedAt))
                 .expirationTime(Date.from(issuedAt.plus(amountToAdd, unit)))
                 .claim("role", user.getRole().name())
@@ -102,7 +102,7 @@ public class JwtHandler {
         return "invalid";
     }
 
-    public String getPhoneNumberFromToken(String token) {
+    public String getEmailFromToken(String token) {
         try {
             SignedJWT signedJWT = SignedJWT.parse(token);
             return signedJWT.getJWTClaimsSet().getSubject();

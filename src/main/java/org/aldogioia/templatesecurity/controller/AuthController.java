@@ -5,7 +5,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.aldogioia.templatesecurity.data.dto.AuthResponseDto;
-import org.aldogioia.templatesecurity.data.dto.CustomerCreateDto;
+import org.aldogioia.templatesecurity.data.dto.UserCreateDto;
 import org.aldogioia.templatesecurity.security.availability.RateLimit;
 import org.aldogioia.templatesecurity.service.interfaces.AuthService;
 import org.springframework.http.HttpStatus;
@@ -29,17 +29,17 @@ public class AuthController {
 
     @PostMapping("/sign-in")
     public ResponseEntity<AuthResponseDto> signIn(
-            @NotBlank(message = "Il numero di teleofno è obbligatorio") @RequestParam String phoneNumber,
+            @NotBlank(message = "l'email e obbligatoria") @RequestParam String email,
             @NotBlank(message = "La password è obbligatoria") @RequestParam String password
     ) {
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(authService.signIn(phoneNumber, password));
+                .body(authService.signIn(email, password));
     }
 
     @PostMapping("/sign-up")
-    public ResponseEntity<HttpStatus> signUp(@Valid @RequestBody CustomerCreateDto customerCreateDto) {
-        authService.signUp(customerCreateDto);
+    public ResponseEntity<HttpStatus> signUp(@Valid @RequestBody UserCreateDto userCreateDto) {
+        authService.signUp(userCreateDto);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .build();

@@ -1,8 +1,8 @@
 package org.aldogioia.templatesecurity.configurations;
 
 import lombok.RequiredArgsConstructor;
-import org.aldogioia.templatesecurity.data.dto.CustomerCreateDto;
-import org.aldogioia.templatesecurity.data.entities.Customer;
+import org.aldogioia.templatesecurity.data.dto.UserCreateDto;
+import org.aldogioia.templatesecurity.data.entities.User;
 import org.aldogioia.templatesecurity.data.enumerators.Role;
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
@@ -28,15 +28,14 @@ public class ModelMapperConfig {
 
         Converter<String, String> passwordConverter = context -> passwordEncoder.encode(context.getSource());
 
-        modelMapper.addMappings(
-                new PropertyMap<CustomerCreateDto, Customer>() {
-                    @Override
-                    protected void configure() {
-                        map().setRole(Role.ROLE_CUSTOMER);
-                        using(passwordConverter).map().setPassword(source.getPassword());
-                    }
-                }
-        );
+        // mapping da UserCreateDto a User, crittografa la password
+        modelMapper.addMappings(new PropertyMap<UserCreateDto, User>() {
+            @Override
+            protected void configure() {
+                map().setRole(Role.ROLE_ADMIN);
+                using(passwordConverter).map(source.getPassword(), destination.getPassword());
+            }
+        });
 
         modelMapper.getConfiguration()
                 .setFieldMatchingEnabled(true)

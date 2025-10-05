@@ -5,14 +5,14 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.aldogioia.templatesecurity.data.dao.UserDao;
 import org.aldogioia.templatesecurity.data.dto.AuthResponseDto;
-import org.aldogioia.templatesecurity.data.dto.CustomerCreateDto;
+import org.aldogioia.templatesecurity.data.dto.UserCreateDto;
 import org.aldogioia.templatesecurity.data.entities.User;
 import org.aldogioia.templatesecurity.data.enumerators.TokenType;
 import org.aldogioia.templatesecurity.security.authentication.JwtHandler;
 import org.aldogioia.templatesecurity.security.exception.customException.TokenException;
 import org.aldogioia.templatesecurity.service.interfaces.AuthService;
 import org.aldogioia.templatesecurity.service.interfaces.BlacklistService;
-import org.aldogioia.templatesecurity.service.interfaces.CustomerService;
+import org.aldogioia.templatesecurity.service.interfaces.UserService;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
@@ -22,17 +22,17 @@ import org.springframework.stereotype.Service;
 public class AuthServiceImpl implements AuthService {
     private final UserDao userDao;
     private final JwtHandler jwtHandler;
-    private final CustomerService customerService;
+    private final UserService userService;
     private final BlacklistService blacklistService;
     private final AuthenticationManager authenticationManager;
 
     @Override
-    public AuthResponseDto signIn(String phoneNumber, String password) {
+    public AuthResponseDto signIn(String email, String password) {
         authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(phoneNumber, password));
+                new UsernamePasswordAuthenticationToken(email, password));
 
-        User user = userDao.findByPhoneNumber(phoneNumber)
-                .orElseThrow(() -> new EntityNotFoundException("Utente non trovato col numero di telefono: " + phoneNumber));
+        User user = userDao.findByEmail(email)
+                .orElseThrow(() -> new EntityNotFoundException("Utente non trovato col numero di telefono: " + email));
 
         AuthResponseDto authResponseDto = new AuthResponseDto();
         authResponseDto.setAccessToken(jwtHandler.generateAccessToken(user));
@@ -42,8 +42,8 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public void signUp(CustomerCreateDto customerCreateDto) {
-        customerService.createCustomer(customerCreateDto);
+    public void signUp(UserCreateDto userCreateDto) {
+        userService.createCustomer(userCreateDto);
     }
 
     @Override
@@ -59,8 +59,8 @@ public class AuthServiceImpl implements AuthService {
         }
 
         try {
-            String phoneNumberFromToken = jwtHandler.getPhoneNumberFromToken(refreshToken);
-            var user = userDao.findByPhoneNumber(phoneNumberFromToken)
+            String emailFromToken = jwtHandler.getEmailFromToken(refreshToken);
+            var user = userDao.findByEmail(emailFromToken)
                     .orElseThrow(() -> new EntityNotFoundException("Utente non trovato"));
 
             return jwtHandler.generateAccessToken(user);

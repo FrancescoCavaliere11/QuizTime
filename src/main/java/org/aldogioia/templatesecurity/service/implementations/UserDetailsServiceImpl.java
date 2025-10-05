@@ -17,23 +17,23 @@ import org.springframework.stereotype.Service;
 public class UserDetailsServiceImpl implements UserDetailsService {
     private final UserDao userDao;
     /**
-     * Carica un utente in base al numero di telefono.
+     * Carica un utente in base all'email.
      *
-     * @param phoneNumber il numero di telefono dell'utente
+     * @param email l'email dell'utente da caricare
      * @return i dettagli dell'utente
      * @throws UsernameNotFoundException se l'utente non viene trovato
      */
     @Override
-    public UserDetails loadUserByUsername(String phoneNumber) throws UsernameNotFoundException {
-        User user = userDao.findByPhoneNumber(phoneNumber)
-                .orElseThrow(() -> new EntityNotFoundException("User not found with phone number: " + phoneNumber));
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        User user = userDao.findByEmail(email)
+                .orElseThrow(() -> new EntityNotFoundException("User not found with phone number: " + email));
         return new CustomUserDetails(user);
     }
 
     /**
-     * Ottiene il numero di telefono dell'utente corrente.
+     * Ottiene l'email dell'utente attualmente autenticato.
      *
-     * @return il numero di telefono dell'utente corrente
+     * @return l'email dell'utente attualmente autenticato
      */
     public String getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

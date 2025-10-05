@@ -11,8 +11,6 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
 @Table(name = "users")
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "user_type", discriminatorType = DiscriminatorType.STRING)
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
@@ -26,14 +24,11 @@ public class User extends Auditable {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    @Column(name = "name", nullable = false)
-    private String name;
+    @Column(name = "email", nullable = false, unique = true)
+    private String email;
 
-    @Column(name = "surname", nullable = false)
-    private String surname;
-
-    @Column(name = "phone_number", nullable = false, unique = true)
-    private String phoneNumber;
+    @Column(name = "username", nullable = false, unique = true)
+    private String username;
 
     @Column(name = "password")
     private String password;
